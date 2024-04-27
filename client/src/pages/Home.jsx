@@ -1,12 +1,25 @@
-import { Link } from "react-router-dom"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {app} from "../firebase"
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const auth = getAuth(app);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setName(user.email);
+        console.log(user)
+      } 
+    });
+  }, [])
+
   return (
-    <div className="text-center">
-      <p className="text-5xl mb-6">Bonjour</p>
-      <p className="text-gray-600 max-w-[90vw] ">Connectez vous à un compte pour pouvoir commencer à prendre des notes.</p>
-      <div className="mt-16 px-4 py-2 border border-black rounded-md cursor-pointer"><Link to="/login">Connexion</Link></div>
-      <p className="text-blue-600 text-xs hover:underline cursor-pointer mt-2">ou créez un compte</p>
+    <div>
+      <h2 className="text-3xl">Bonjour</h2>
+      <p>{name && name}</p>
     </div>
   )
 }
